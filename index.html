@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UV Light Effect — TRILOKA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap');
+
+  :root {
+    --uv-blue: #4400ff;
+    --uv-purple: #9b00ff;
+    --uv-cyan: #00f0ff;
+    --uv-pink: #ff00cc;
+    --dark: #050510;
+    --card: #0a0a1a;
+    --border: rgba(0, 240, 255, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(68, 0, 255, 0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(155, 0, 255, 0.10) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 80%, rgba(0, 240, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: var(--uv-cyan);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--uv-cyan), var(--uv-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  /* Upload Zone */
+  .upload-zone {
+    border: 1.5px dashed var(--uv-cyan);
+    border-radius: 16px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(0, 240, 255, 0.03);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .upload-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(68,0,255,0.05), rgba(0,240,255,0.05));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .upload-zone:hover::before,
+  .upload-zone.dragover::before { opacity: 1; }
+  .upload-zone:hover { border-color: var(--uv-purple); transform: translateY(-1px); }
+
+  .upload-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+    display: block;
+    filter: drop-shadow(0 0 10px var(--uv-cyan));
+  }
+
+  .upload-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--uv-cyan);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .upload-hint {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  #fileInput { display: none; }
+
+  /* Canvas area */
+  .canvas-container {
+    display: none;
+    margin-bottom: 20px;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 40px rgba(68, 0, 255, 0.2);
+  }
+
+  .canvas-container.visible { display: block; }
+
+  canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* UV badge */
+  .uv-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(155, 0, 255, 0.8);
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(4px);
+  }
+
+  /* Controls */
+  .controls {
+    display: none;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .controls.visible { display: block; }
+
+  .controls-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--uv-cyan);
+    margin-bottom: 18px;
+    opacity: 0.8;
+  }
+
+  .slider-group {
+    margin-bottom: 16px;
+  }
+
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .slider-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 0.5px;
+  }
+
+  .slider-val {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    color: var(--uv-cyan);
+    min-width: 32px;
+    text-align: right;
+  }
+
+  input[type=range] {
+    width: 100%;
+    height: 4px;
+    -webkit-appearance: none;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--uv-cyan), var(--uv-purple));
+    box-shadow: 0 0 8px var(--uv-cyan);
+    cursor: pointer;
+  }
+
+  /* Color mode buttons */
+  .color-modes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .mode-btn {
+    padding: 8px 4px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.5);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .mode-btn.active {
+    border-color: var(--uv-cyan);
+    color: var(--uv-cyan);
+    background: rgba(0, 240, 255, 0.08);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+  }
+
+  .mode-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .section-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  /* Action buttons */
+  .actions {
+    display: none;
+    gap: 12px;
+  }
+
+  .actions.visible { display: flex; }
+
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-transform: uppercase;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--uv-purple), var(--uv-blue));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(155, 0, 255, 0.4);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(155, 0, 255, 0.5);
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+  }
+
+  /* Processing overlay */
+  .processing {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 5, 16, 0.85);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    backdrop-filter: blur(4px);
+    border-radius: 16px;
+  }
+
+  .processing.show { display: flex; }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(0, 240, 255, 0.2);
+    border-top-color: var(--uv-cyan);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .processing-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--uv-cyan);
+  }
+
+  /* Glow pulse animation on canvas when UV is high */
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(68, 0, 255, 0.2); }
+    50% { box-shadow: 0 0 60px rgba(155, 0, 255, 0.4), 0 0 80px rgba(0, 240, 255, 0.2); }
+  }
+
+  .canvas-container.uv-active {
+    animation: glowPulse 2.5s ease-in-out infinite;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 16px 0;
+  }
+
+  /* Toggle switch for live preview */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .toggle-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); }
+
+  .toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+  }
+
+  .toggle input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    border-radius: 24px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .toggle-slider:before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+
+  .toggle input:checked + .toggle-slider {
+    background: linear-gradient(135deg, var(--uv-purple), var(--uv-blue));
+    box-shadow: 0 0 10px rgba(155,0,255,0.5);
+  }
+
+  .toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="logo">TRILOKA</div>
+    <h1>UV LIGHT EFFECT</h1>
+    <p class="subtitle">Convert normal photos to UV reactive look</p>
+  </header>
+
+  <!-- Upload -->
+  <div class="upload-zone" id="uploadZone">
+    <span class="upload-icon">🔦</span>
+    <span class="upload-text">Tap to upload photo</span>
+    <span class="upload-hint">JPG, PNG supported · Works on mobile</span>
+    <input type="file" id="fileInput" accept="image/*">
+  </div>
+
+  <!-- Canvas -->
+  <div class="canvas-container" id="canvasContainer">
+    <canvas id="mainCanvas"></canvas>
+    <div class="uv-badge">UV REACTIVE</div>
+    <div class="processing" id="processing">
+      <div class="spinner"></div>
+      <div class="processing-text">PROCESSING</div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls" id="controls">
+    <div class="controls-title">⚡ UV EFFECT CONTROLS</div>
+
+    <div class="toggle-row">
+      <span class="toggle-label">Live Preview</span>
+      <label class="toggle">
+        <input type="checkbox" id="livePreview" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">Color Mode</div>
+    <div class="color-modes">
+      <button class="mode-btn active" data-mode="classic">Classic UV</button>
+      <button class="mode-btn" data-mode="deep">Deep Space</button>
+      <button class="mode-btn" data-mode="neon">Neon Pink</button>
+      <button class="mode-btn" data-mode="cyber">Cyber Blue</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="slider-group">
+      <div class="slider-label">
+        <span class="slider-name">UV Intensity</span>
+        <span class="slider-val" id="intensityVal">75</span>
+      </div>
+      <input type="range" id="intensity" min="0" max="100" value="75">
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-label">
+        <span class="slider-name">Glow Strength</span>
+        <span class="slider-val" id="glowVal">60</span>
+      </div>
+      <input type="range" id="glow" min="0" max="100" value="60">
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-label">
+        <span class="slider-name">Darkness</span>
+        <span class="slider-val" id="darknessVal">70</span>
+      </div>
+      <input type="range" id="darkness" min="0" max="100" value="70">
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-label">
+        <span class="slider-name">Color Shift</span>
+        <span class="slider-val" id="colorShiftVal">50</span>
+      </div>
+      <input type="range" id="colorShift" min="0" max="100" value="50">
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-label">
+        <span class="slider-name">Neon Pop</span>
+        <span class="slider-val" id="neonVal">65</span>
+      </div>
+      <input type="range" id="neon" min="0" max="100" value="65">
+    </div>
+
+  </div>
+
+  <!-- Actions -->
+  <div class="actions" id="actions">
+    <button class="btn btn-secondary" id="resetBtn">RESET</button>
+    <button class="btn btn-primary" id="downloadBtn">⬇ DOWNLOAD</button>
+  </div>
+
+</div>
+
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const uploadZone = document.getElementById('uploadZone');
+  const canvasContainer = document.getElementById('canvasContainer');
+  const mainCanvas = document.getElementById('mainCanvas');
+  const controls = document.getElementById('controls');
+  const actions = document.getElementById('actions');
+  const processing = document.getElementById('processing');
+  const ctx = mainCanvas.getContext('2d');
+
+  let originalImage = null;
+  let currentMode = 'classic';
+  let debounceTimer = null;
+
+  // Color mode configs
+  const modes = {
+    classic: { hueShift: 240, satBoost: 1.8, tintR: 0.1, tintG: 0.05, tintB: 0.9 },
+    deep:    { hueShift: 270, satBoost: 2.0, tintR: 0.15, tintG: 0.0, tintB: 0.85 },
+    neon:    { hueShift: 300, satBoost: 2.2, tintR: 0.7, tintG: 0.0, tintB: 0.9 },
+    cyber:   { hueShift: 190, satBoost: 1.9, tintR: 0.0, tintG: 0.4, tintB: 1.0 }
+  };
+
+  // Upload handlers
+  uploadZone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+  uploadZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+  });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    handleFile(e.dataTransfer.files[0]);
+  });
+
+  function handleFile(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        originalImage = img;
+        // Set canvas size — 2048px max for Shopify quality
+        const maxW = 2048;
+        const maxH = 2048;
+        const scale = Math.min(1, maxW / img.width, maxH / img.height);
+        mainCanvas.width = Math.round(img.width * scale);
+        mainCanvas.height = Math.round(img.height * scale);
+
+        uploadZone.style.display = 'none';
+        canvasContainer.classList.add('visible');
+        controls.classList.add('visible');
+        actions.classList.add('visible');
+
+        applyEffect();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Sliders
+  const sliders = ['intensity', 'glow', 'darkness', 'colorShift', 'neon'];
+  sliders.forEach(id => {
+    const el = document.getElementById(id);
+    const val = document.getElementById(id + 'Val');
+    el.addEventListener('input', () => {
+      val.textContent = el.value;
+      if (document.getElementById('livePreview').checked) {
+        triggerEffect();
+      }
+    });
+  });
+
+  document.getElementById('livePreview').addEventListener('change', () => {
+    if (document.getElementById('livePreview').checked) applyEffect();
+  });
+
+  // Mode buttons
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      if (document.getElementById('livePreview').checked) triggerEffect();
+    });
+  });
+
+  function triggerEffect() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(applyEffect, 120);
+  }
+
+  function applyEffect() {
+    if (!originalImage) return;
+
+    const intensity = parseInt(document.getElementById('intensity').value) / 100;
+    const glowStr = parseInt(document.getElementById('glow').value) / 100;
+    const darkness = parseInt(document.getElementById('darkness').value) / 100;
+    const colorShift = parseInt(document.getElementById('colorShift').value) / 100;
+    const neonPop = parseInt(document.getElementById('neon').value) / 100;
+    const mode = modes[currentMode];
+
+    // Draw original
+    ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+    ctx.drawImage(originalImage, 0, 0, mainCanvas.width, mainCanvas.height);
+
+    // Get pixel data
+    const imageData = ctx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+    const data = imageData.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+      let r = data[i] / 255;
+      let g = data[i + 1] / 255;
+      let b = data[i + 2] / 255;
+
+      // Step 1: Darken background (crush blacks)
+      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+      const darkFactor = Math.pow(lum, 1 + darkness * 2);
+
+      // Step 2: Apply UV color tint based on mode
+      r = r * (1 - colorShift * intensity) + darkFactor * mode.tintR * colorShift * intensity;
+      g = g * (1 - colorShift * intensity * 0.8) + darkFactor * mode.tintG * colorShift * intensity;
+      b = b * (1 - colorShift * intensity * 0.3) + darkFactor * mode.tintB * colorShift * intensity;
+
+      // Step 3: Boost bright areas (simulates UV reactive print glow)
+      const brightness = Math.max(r, g, b);
+      if (brightness > 0.5) {
+        const glowBoost = (brightness - 0.5) * 2 * glowStr * neonPop * intensity;
+        r += glowBoost * mode.tintR * 0.5;
+        g += glowBoost * mode.tintG * 0.3;
+        b += glowBoost * mode.tintB;
+      }
+
+      // Step 4: Darken overall for UV atmosphere
+      const darkMulti = 1 - (darkness * 0.6 * intensity);
+      r = r * darkMulti * (1 + intensity * 0.3);
+      g = g * darkMulti * (1 + intensity * 0.1);
+      b = b * darkMulti * (1 + intensity * 0.5);
+
+      // Step 5: Neon saturation pop
+      const avg = (r + g + b) / 3;
+      r = avg + (r - avg) * (1 + neonPop * mode.satBoost * intensity);
+      g = avg + (g - avg) * (1 + neonPop * mode.satBoost * intensity);
+      b = avg + (b - avg) * (1 + neonPop * mode.satBoost * intensity);
+
+      // Clamp
+      data[i]     = Math.min(255, Math.max(0, r * 255));
+      data[i + 1] = Math.min(255, Math.max(0, g * 255));
+      data[i + 2] = Math.min(255, Math.max(0, b * 255));
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+
+    // CSS glow effect on canvas for high intensity
+    if (intensity > 0.5) {
+      canvasContainer.classList.add('uv-active');
+    } else {
+      canvasContainer.classList.remove('uv-active');
+    }
+  }
+
+  // Reset
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!originalImage) return;
+    ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+    ctx.drawImage(originalImage, 0, 0, mainCanvas.width, mainCanvas.height);
+    canvasContainer.classList.remove('uv-active');
+    // Reset sliders
+    document.getElementById('intensity').value = 75;
+    document.getElementById('glow').value = 60;
+    document.getElementById('darkness').value = 70;
+    document.getElementById('colorShift').value = 50;
+    document.getElementById('neon').value = 65;
+    ['intensity','glow','darkness','colorShift','neon'].forEach(id => {
+      document.getElementById(id + 'Val').textContent = document.getElementById(id).value;
+    });
+    currentMode = 'classic';
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-mode="classic"]').classList.add('active');
+    applyEffect();
+  });
+
+  // Download — 2048px max, JPEG 85% optimised for Shopify
+  document.getElementById('downloadBtn').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'triloka-uv-shopify.jpg';
+    link.href = mainCanvas.toDataURL('image/jpeg', 0.85);
+    link.click();
+  });
+</script>
+</body>
+</html>
