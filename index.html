@@ -2,714 +2,1079 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UV Light Effect — TRILOKA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TRILOKA UV Studio</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TRILOKA UV">
+<meta name="theme-color" content="#050510">
+<link rel="manifest" href="data:application/json;charset=utf-8,{
+  &quot;name&quot;: &quot;TRILOKA UV Studio&quot;,
+  &quot;short_name&quot;: &quot;TRILOKA UV&quot;,
+  &quot;start_url&quot;: &quot;.&quot;,
+  &quot;display&quot;: &quot;standalone&quot;,
+  &quot;background_color&quot;: &quot;#050510&quot;,
+  &quot;theme_color&quot;: &quot;#050510&quot;,
+  &quot;icons&quot;: []
+}">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap');
 
-  :root {
-    --uv-blue: #4400ff;
-    --uv-purple: #9b00ff;
-    --uv-cyan: #00f0ff;
-    --uv-pink: #ff00cc;
-    --dark: #050510;
-    --card: #0a0a1a;
-    --border: rgba(0, 240, 255, 0.15);
-  }
+:root {
+  --uv-blue: #4400ff;
+  --uv-purple: #9b00ff;
+  --uv-cyan: #00f0ff;
+  --uv-pink: #ff00cc;
+  --dark: #050510;
+  --card: #0a0a1a;
+  --border: rgba(0,240,255,0.15);
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-  body {
-    background: var(--dark);
-    color: #fff;
-    font-family: 'Rajdhani', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+body {
+  background: var(--dark);
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  /* Animated background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: 
-      radial-gradient(ellipse at 20% 50%, rgba(68, 0, 255, 0.12) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(155, 0, 255, 0.10) 0%, transparent 50%),
-      radial-gradient(ellipse at 60% 80%, rgba(0, 240, 255, 0.08) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(68,0,255,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(155,0,255,0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 80%, rgba(0,240,255,0.08) 0%, transparent 50%);
+  pointer-events:none;
+  z-index:0;
+}
 
-  .app {
-    position: relative;
-    z-index: 1;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 24px 16px 48px;
-  }
+.app {
+  position:relative;
+  z-index:1;
+  max-width:480px;
+  margin:0 auto;
+  padding:20px 16px 60px;
+}
 
-  /* Header */
-  header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
+/* HEADER */
+header { text-align:center; margin-bottom:24px; }
 
-  .logo {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 6px;
-    color: var(--uv-cyan);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    opacity: 0.7;
-  }
+.logo-row {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:6px;
+}
 
-  h1 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 22px;
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--uv-cyan), var(--uv-purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 2px;
-  }
+.logo-icon {
+  width:36px;
+  height:36px;
+  background: linear-gradient(135deg, var(--uv-purple), var(--uv-cyan));
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  box-shadow:0 0 16px rgba(0,240,255,0.4);
+  flex-shrink:0;
+}
 
-  .subtitle {
-    font-size: 13px;
-    color: rgba(255,255,255,0.4);
-    margin-top: 6px;
-    letter-spacing: 1px;
-  }
+.logo-text {
+  font-family:'Orbitron',sans-serif;
+  font-size:20px;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--uv-cyan),var(--uv-purple));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  letter-spacing:3px;
+}
 
-  /* Upload Zone */
-  .upload-zone {
-    border: 1.5px dashed var(--uv-cyan);
-    border-radius: 16px;
-    padding: 40px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: rgba(0, 240, 255, 0.03);
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
+.subtitle {
+  font-size:12px;
+  color:rgba(255,255,255,0.35);
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
 
-  .upload-zone::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(68,0,255,0.05), rgba(0,240,255,0.05));
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
+/* TABS */
+.tabs {
+  display:none;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:6px;
+  margin-bottom:16px;
+}
+.tabs.visible { display:grid; }
 
-  .upload-zone:hover::before,
-  .upload-zone.dragover::before { opacity: 1; }
-  .upload-zone:hover { border-color: var(--uv-purple); transform: translateY(-1px); }
+.tab {
+  padding:9px 4px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03);
+  color:rgba(255,255,255,0.4);
+  font-family:'Rajdhani',sans-serif;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-align:center;
+  text-transform:uppercase;
+}
 
-  .upload-icon {
-    font-size: 40px;
-    margin-bottom: 12px;
-    display: block;
-    filter: drop-shadow(0 0 10px var(--uv-cyan));
-  }
+.tab.active {
+  border-color:var(--uv-cyan);
+  color:var(--uv-cyan);
+  background:rgba(0,240,255,0.07);
+  box-shadow:0 0 12px rgba(0,240,255,0.12);
+}
 
-  .upload-text {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--uv-cyan);
-    display: block;
-    margin-bottom: 4px;
-  }
+/* UPLOAD */
+.upload-zone {
+  border:1.5px dashed var(--uv-cyan);
+  border-radius:16px;
+  padding:40px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.3s;
+  background:rgba(0,240,255,0.03);
+  position:relative;
+  overflow:hidden;
+  margin-bottom:16px;
+}
+.upload-zone:hover { border-color:var(--uv-purple); }
+.upload-icon { font-size:40px; margin-bottom:12px; display:block; filter:drop-shadow(0 0 10px var(--uv-cyan)); }
+.upload-text { font-size:16px; font-weight:600; color:var(--uv-cyan); display:block; margin-bottom:4px; }
+.upload-hint { font-size:12px; color:rgba(255,255,255,0.3); }
+#fileInput, #batchInput { display:none; }
 
-  .upload-hint {
-    font-size: 12px;
-    color: rgba(255,255,255,0.3);
-  }
+/* CANVAS AREA */
+.canvas-wrap {
+  display:none;
+  margin-bottom:16px;
+}
+.canvas-wrap.visible { display:block; }
 
-  #fileInput { display: none; }
+/* Before/After slider */
+.compare-container {
+  position:relative;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--border);
+  box-shadow:0 0 40px rgba(68,0,255,0.2);
+  cursor:col-resize;
+  user-select:none;
+}
 
-  /* Canvas area */
-  .canvas-container {
-    display: none;
-    margin-bottom: 20px;
-    border-radius: 16px;
-    overflow: hidden;
-    position: relative;
-    border: 1px solid var(--border);
-    box-shadow: 0 0 40px rgba(68, 0, 255, 0.2);
-  }
+.compare-container canvas {
+  width:100%;
+  height:auto;
+  display:block;
+}
 
-  .canvas-container.visible { display: block; }
+#beforeCanvas {
+  position:absolute;
+  top:0;
+  left:0;
+  clip-path:inset(0 50% 0 0);
+  z-index:2;
+}
 
-  canvas {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
+#afterCanvas { position:relative; z-index:1; }
 
-  /* UV badge */
-  .uv-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(155, 0, 255, 0.8);
-    color: #fff;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.3);
-    backdrop-filter: blur(4px);
-  }
+.compare-handle {
+  display:none;
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:3px;
+  background:white;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+  cursor:col-resize;
+}
 
-  /* Controls */
-  .controls {
-    display: none;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-  }
+.compare-handle::before {
+  content:'◀ ▶';
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  color:#000;
+  font-size:10px;
+  font-weight:900;
+  padding:4px 6px;
+  border-radius:20px;
+  white-space:nowrap;
+  letter-spacing:1px;
+}
 
-  .controls.visible { display: block; }
+.compare-container.compare-mode .compare-handle { display:block; }
 
-  .controls-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--uv-cyan);
-    margin-bottom: 18px;
-    opacity: 0.8;
-  }
+/* UV badge */
+.uv-badge {
+  position:absolute;
+  top:12px;
+  right:12px;
+  background:rgba(155,0,255,0.85);
+  color:#fff;
+  font-family:'Orbitron',sans-serif;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:2px;
+  padding:4px 10px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.25);
+  backdrop-filter:blur(4px);
+  z-index:5;
+}
 
-  .slider-group {
-    margin-bottom: 16px;
-  }
+/* PANEL */
+.panel {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:14px;
+}
 
-  .slider-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
+.panel-title {
+  font-family:'Orbitron',sans-serif;
+  font-size:9px;
+  letter-spacing:3px;
+  color:var(--uv-cyan);
+  margin-bottom:14px;
+  opacity:0.8;
+  text-transform:uppercase;
+}
 
-  .slider-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.8);
-    letter-spacing: 0.5px;
-  }
+/* Sliders */
+.slider-group { margin-bottom:14px; }
+.slider-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:7px; }
+.slider-name { font-size:13px; font-weight:600; color:rgba(255,255,255,0.8); }
+.slider-val { font-family:'Orbitron',sans-serif; font-size:11px; color:var(--uv-cyan); min-width:28px; text-align:right; }
 
-  .slider-val {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 11px;
-    color: var(--uv-cyan);
-    min-width: 32px;
-    text-align: right;
-  }
+input[type=range] {
+  width:100%; height:4px; -webkit-appearance:none;
+  background:rgba(255,255,255,0.1); border-radius:2px; outline:none; cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:18px; height:18px; border-radius:50%;
+  background:linear-gradient(135deg,var(--uv-cyan),var(--uv-purple));
+  box-shadow:0 0 8px var(--uv-cyan); cursor:pointer;
+}
 
-  input[type=range] {
-    width: 100%;
-    height: 4px;
-    -webkit-appearance: none;
-    background: rgba(255,255,255,0.1);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-  }
+/* Color modes */
+.color-modes { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:14px; }
+.mode-btn {
+  padding:8px 4px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.45);
+  font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:600;
+  cursor:pointer; transition:all 0.2s; text-align:center;
+}
+.mode-btn.active {
+  border-color:var(--uv-cyan); color:var(--uv-cyan);
+  background:rgba(0,240,255,0.07); box-shadow:0 0 10px rgba(0,240,255,0.12);
+}
 
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--uv-cyan), var(--uv-purple));
-    box-shadow: 0 0 8px var(--uv-cyan);
-    cursor: pointer;
-  }
+/* Toggle */
+.toggle-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.toggle-label { font-size:13px; font-weight:600; color:rgba(255,255,255,0.7); }
+.toggle { position:relative; width:44px; height:24px; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle-slider {
+  position:absolute; inset:0; background:rgba(255,255,255,0.1);
+  border-radius:24px; cursor:pointer; transition:0.3s;
+}
+.toggle-slider:before {
+  content:''; position:absolute; width:18px; height:18px;
+  left:3px; top:3px; background:#fff; border-radius:50%; transition:0.3s;
+}
+.toggle input:checked + .toggle-slider {
+  background:linear-gradient(135deg,var(--uv-purple),var(--uv-blue));
+  box-shadow:0 0 10px rgba(155,0,255,0.4);
+}
+.toggle input:checked + .toggle-slider:before { transform:translateX(20px); }
 
-  /* Color mode buttons */
-  .color-modes {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
-  }
+.divider { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:14px 0; }
+.section-label { font-size:11px; color:rgba(255,255,255,0.3); letter-spacing:1px; margin-bottom:10px; text-transform:uppercase; }
 
-  .mode-btn {
-    padding: 8px 4px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.04);
-    color: rgba(255,255,255,0.5);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-  }
+/* PRESETS */
+.preset-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.preset-card {
+  padding:12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03);
+  cursor:pointer;
+  transition:all 0.2s;
+  position:relative;
+}
+.preset-card:hover { border-color:var(--uv-cyan); background:rgba(0,240,255,0.05); }
+.preset-card.saved { border-color:var(--uv-purple); }
+.preset-name { font-size:13px; font-weight:700; color:#fff; margin-bottom:2px; }
+.preset-desc { font-size:11px; color:rgba(255,255,255,0.35); }
+.preset-dot {
+  width:8px; height:8px; border-radius:50%;
+  position:absolute; top:10px; right:10px;
+}
 
-  .mode-btn.active {
-    border-color: var(--uv-cyan);
-    color: var(--uv-cyan);
-    background: rgba(0, 240, 255, 0.08);
-    box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
-  }
+.save-preset-btn {
+  width:100%; padding:12px; margin-top:10px;
+  border-radius:12px; border:1px dashed rgba(0,240,255,0.3);
+  background:transparent; color:var(--uv-cyan);
+  font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700;
+  letter-spacing:1px; cursor:pointer; transition:all 0.2s;
+}
+.save-preset-btn:hover { background:rgba(0,240,255,0.05); }
 
-  .mode-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+/* WATERMARK */
+.wm-options { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.wm-opt {
+  padding:10px 8px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.5);
+  font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:600;
+  cursor:pointer; transition:all 0.2s; text-align:center;
+}
+.wm-opt.active {
+  border-color:var(--uv-purple); color:var(--uv-purple);
+  background:rgba(155,0,255,0.07);
+}
 
-  .section-label {
-    font-size: 11px;
-    color: rgba(255,255,255,0.35);
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-  }
+/* BATCH */
+.batch-zone {
+  border:1.5px dashed rgba(155,0,255,0.5);
+  border-radius:12px; padding:24px 16px; text-align:center;
+  cursor:pointer; background:rgba(155,0,255,0.03);
+  margin-bottom:12px; transition:all 0.2s;
+}
+.batch-zone:hover { border-color:var(--uv-purple); }
+.batch-list { display:flex; flex-direction:column; gap:8px; }
+.batch-item {
+  display:flex; align-items:center; gap:10px;
+  background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 12px;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.batch-thumb { width:40px; height:40px; border-radius:6px; object-fit:cover; flex-shrink:0; }
+.batch-name { font-size:12px; color:rgba(255,255,255,0.7); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.batch-status { font-size:11px; font-family:'Orbitron',sans-serif; }
+.batch-status.done { color:#00ff88; }
+.batch-status.processing { color:var(--uv-cyan); }
+.batch-status.pending { color:rgba(255,255,255,0.3); }
 
-  /* Action buttons */
-  .actions {
-    display: none;
-    gap: 12px;
-  }
+/* ACTIONS */
+.actions { display:none; gap:10px; margin-bottom:14px; }
+.actions.visible { display:flex; }
 
-  .actions.visible { display: flex; }
+.btn {
+  flex:1; padding:14px; border-radius:12px; border:none;
+  font-family:'Orbitron',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:1.5px; cursor:pointer; transition:all 0.25s; text-transform:uppercase;
+}
+.btn-primary {
+  background:linear-gradient(135deg,var(--uv-purple),var(--uv-blue));
+  color:#fff; box-shadow:0 4px 20px rgba(155,0,255,0.35);
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(155,0,255,0.5); }
+.btn-secondary {
+  background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.55);
+  border:1px solid rgba(255,255,255,0.1);
+}
+.btn-secondary:hover { background:rgba(255,255,255,0.08); color:#fff; }
 
-  .btn {
-    flex: 1;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: all 0.25s;
-    text-transform: uppercase;
-  }
+/* Compare toggle button */
+.compare-btn {
+  width:100%; padding:11px; border-radius:12px; border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.5);
+  font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700;
+  cursor:pointer; transition:all 0.2s; margin-bottom:14px; letter-spacing:1px;
+}
+.compare-btn.active {
+  border-color:var(--uv-cyan); color:var(--uv-cyan);
+  background:rgba(0,240,255,0.06);
+}
 
-  .btn-primary {
-    background: linear-gradient(135deg, var(--uv-purple), var(--uv-blue));
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(155, 0, 255, 0.4);
-  }
+/* Glow animation */
+@keyframes glowPulse {
+  0%,100% { box-shadow:0 0 30px rgba(68,0,255,0.2); }
+  50% { box-shadow:0 0 60px rgba(155,0,255,0.4),0 0 80px rgba(0,240,255,0.15); }
+}
+.compare-container.uv-active { animation:glowPulse 2.5s ease-in-out infinite; }
 
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(155, 0, 255, 0.5);
-  }
+/* Batch download btn */
+.batch-dl-btn {
+  width:100%; padding:14px; border-radius:12px; border:none; margin-top:12px;
+  background:linear-gradient(135deg,var(--uv-purple),var(--uv-blue));
+  color:#fff; font-family:'Orbitron',sans-serif; font-size:10px;
+  font-weight:700; letter-spacing:2px; cursor:pointer;
+  box-shadow:0 4px 20px rgba(155,0,255,0.3); transition:all 0.2s;
+  display:none;
+}
+.batch-dl-btn.visible { display:block; }
 
-  .btn-secondary {
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.6);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .btn-secondary:hover {
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-  }
-
-  /* Processing overlay */
-  .processing {
-    display: none;
-    position: absolute;
-    inset: 0;
-    background: rgba(5, 5, 16, 0.85);
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 12px;
-    backdrop-filter: blur(4px);
-    border-radius: 16px;
-  }
-
-  .processing.show { display: flex; }
-
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 2px solid rgba(0, 240, 255, 0.2);
-    border-top-color: var(--uv-cyan);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .processing-text {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--uv-cyan);
-  }
-
-  /* Glow pulse animation on canvas when UV is high */
-  @keyframes glowPulse {
-    0%, 100% { box-shadow: 0 0 40px rgba(68, 0, 255, 0.2); }
-    50% { box-shadow: 0 0 60px rgba(155, 0, 255, 0.4), 0 0 80px rgba(0, 240, 255, 0.2); }
-  }
-
-  .canvas-container.uv-active {
-    animation: glowPulse 2.5s ease-in-out infinite;
-  }
-
-  /* Divider */
-  .divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border), transparent);
-    margin: 16px 0;
-  }
-
-  /* Toggle switch for live preview */
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-
-  .toggle-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); }
-
-  .toggle {
-    position: relative;
-    width: 44px;
-    height: 24px;
-  }
-
-  .toggle input { opacity: 0; width: 0; height: 0; }
-
-  .toggle-slider {
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0.1);
-    border-radius: 24px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-
-  .toggle-slider:before {
-    content: '';
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    left: 3px;
-    top: 3px;
-    background: #fff;
-    border-radius: 50%;
-    transition: 0.3s;
-  }
-
-  .toggle input:checked + .toggle-slider {
-    background: linear-gradient(135deg, var(--uv-purple), var(--uv-blue));
-    box-shadow: 0 0 10px rgba(155,0,255,0.5);
-  }
-
-  .toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
+/* Toast */
+.toast {
+  position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:rgba(0,240,255,0.15); border:1px solid var(--uv-cyan);
+  backdrop-filter:blur(12px); padding:12px 24px; border-radius:30px;
+  font-family:'Orbitron',sans-serif; font-size:10px; letter-spacing:2px;
+  color:var(--uv-cyan); z-index:999; transition:transform 0.3s ease;
+  white-space:nowrap;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 <div class="app">
 
+  <!-- HEADER -->
   <header>
-    <div class="logo">TRILOKA</div>
-    <h1>UV LIGHT EFFECT</h1>
-    <p class="subtitle">Convert normal photos to UV reactive look</p>
+    <div class="logo-row">
+      <div class="logo-icon">🔆</div>
+      <div class="logo-text">TRILOKA</div>
+    </div>
+    <div class="subtitle">UV Studio · Artwear</div>
   </header>
 
-  <!-- Upload -->
+  <!-- UPLOAD -->
   <div class="upload-zone" id="uploadZone">
     <span class="upload-icon">🔦</span>
     <span class="upload-text">Tap to upload photo</span>
-    <span class="upload-hint">JPG, PNG supported · Works on mobile</span>
+    <span class="upload-hint">JPG or PNG · 2048px Shopify quality</span>
     <input type="file" id="fileInput" accept="image/*">
   </div>
 
-  <!-- Canvas -->
-  <div class="canvas-container" id="canvasContainer">
-    <canvas id="mainCanvas"></canvas>
-    <div class="uv-badge">UV REACTIVE</div>
-    <div class="processing" id="processing">
-      <div class="spinner"></div>
-      <div class="processing-text">PROCESSING</div>
+  <!-- TABS -->
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="edit">Edit</button>
+    <button class="tab" data-tab="presets">Presets</button>
+    <button class="tab" data-tab="batch">Batch</button>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas-wrap" id="canvasWrap">
+    <div class="compare-container" id="compareContainer">
+      <canvas id="afterCanvas"></canvas>
+      <canvas id="beforeCanvas"></canvas>
+      <div class="compare-handle" id="compareHandle"></div>
+      <div class="uv-badge">UV REACTIVE</div>
     </div>
   </div>
 
-  <!-- Controls -->
-  <div class="controls" id="controls">
-    <div class="controls-title">⚡ UV EFFECT CONTROLS</div>
+  <!-- COMPARE BTN -->
+  <button class="compare-btn" id="compareBtn" style="display:none">👁 Before / After Compare</button>
 
-    <div class="toggle-row">
-      <span class="toggle-label">Live Preview</span>
-      <label class="toggle">
-        <input type="checkbox" id="livePreview" checked>
-        <span class="toggle-slider"></span>
-      </label>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section-label">Color Mode</div>
-    <div class="color-modes">
-      <button class="mode-btn active" data-mode="classic">Classic UV</button>
-      <button class="mode-btn" data-mode="deep">Deep Space</button>
-      <button class="mode-btn" data-mode="neon">Neon Pink</button>
-      <button class="mode-btn" data-mode="cyber">Cyber Blue</button>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="slider-group">
-      <div class="slider-label">
-        <span class="slider-name">UV Intensity</span>
-        <span class="slider-val" id="intensityVal">75</span>
-      </div>
-      <input type="range" id="intensity" min="0" max="100" value="75">
-    </div>
-
-    <div class="slider-group">
-      <div class="slider-label">
-        <span class="slider-name">Glow Strength</span>
-        <span class="slider-val" id="glowVal">60</span>
-      </div>
-      <input type="range" id="glow" min="0" max="100" value="60">
-    </div>
-
-    <div class="slider-group">
-      <div class="slider-label">
-        <span class="slider-name">Darkness</span>
-        <span class="slider-val" id="darknessVal">70</span>
-      </div>
-      <input type="range" id="darkness" min="0" max="100" value="70">
-    </div>
-
-    <div class="slider-group">
-      <div class="slider-label">
-        <span class="slider-name">Color Shift</span>
-        <span class="slider-val" id="colorShiftVal">50</span>
-      </div>
-      <input type="range" id="colorShift" min="0" max="100" value="50">
-    </div>
-
-    <div class="slider-group">
-      <div class="slider-label">
-        <span class="slider-name">Neon Pop</span>
-        <span class="slider-val" id="neonVal">65</span>
-      </div>
-      <input type="range" id="neon" min="0" max="100" value="65">
-    </div>
-
-  </div>
-
-  <!-- Actions -->
+  <!-- ACTIONS -->
   <div class="actions" id="actions">
-    <button class="btn btn-secondary" id="resetBtn">RESET</button>
-    <button class="btn btn-primary" id="downloadBtn">⬇ DOWNLOAD</button>
+    <button class="btn btn-secondary" id="resetBtn">Reset</button>
+    <button class="btn btn-primary" id="downloadBtn">⬇ Download</button>
+  </div>
+
+  <!-- ===== TAB: EDIT ===== -->
+  <div id="tabEdit">
+
+    <!-- Controls panel -->
+    <div class="panel" id="controls" style="display:none">
+      <div class="panel-title">⚡ UV Effect Controls</div>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Live Preview</span>
+        <label class="toggle">
+          <input type="checkbox" id="livePreview" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Color Mode</div>
+      <div class="color-modes">
+        <button class="mode-btn active" data-mode="classic">Classic</button>
+        <button class="mode-btn" data-mode="deep">Deep</button>
+        <button class="mode-btn" data-mode="neon">Neon</button>
+        <button class="mode-btn" data-mode="cyber">Cyber</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">UV Intensity</span><span class="slider-val" id="intensityVal">75</span></div>
+        <input type="range" id="intensity" min="0" max="100" value="75">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">Glow Strength</span><span class="slider-val" id="glowVal">60</span></div>
+        <input type="range" id="glow" min="0" max="100" value="60">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">Darkness</span><span class="slider-val" id="darknessVal">70</span></div>
+        <input type="range" id="darkness" min="0" max="100" value="70">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">Color Shift</span><span class="slider-val" id="colorShiftVal">50</span></div>
+        <input type="range" id="colorShift" min="0" max="100" value="50">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">Neon Pop</span><span class="slider-val" id="neonVal">65</span></div>
+        <input type="range" id="neon" min="0" max="100" value="65">
+      </div>
+    </div>
+
+    <!-- Watermark panel -->
+    <div class="panel" id="wmPanel" style="display:none">
+      <div class="panel-title">🔖 Watermark</div>
+      <div class="wm-options">
+        <div class="wm-opt active" data-wm="none">None</div>
+        <div class="wm-opt" data-wm="br">TRILOKA — Bottom Right</div>
+        <div class="wm-opt" data-wm="bl">TRILOKA — Bottom Left</div>
+        <div class="wm-opt" data-wm="center">Centre Subtle</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== TAB: PRESETS ===== -->
+  <div id="tabPresets" style="display:none">
+    <div class="panel">
+      <div class="panel-title">🎛 Saved Presets</div>
+      <div class="preset-grid" id="presetGrid">
+        <!-- Built-in presets -->
+        <div class="preset-card" data-preset="festival">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#ff00cc,#4400ff)"></div>
+          <div class="preset-name">Festival</div>
+          <div class="preset-desc">High glow, deep dark</div>
+        </div>
+        <div class="preset-card" data-preset="rave">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#00f0ff,#9b00ff)"></div>
+          <div class="preset-name">Rave</div>
+          <div class="preset-desc">Max neon pop</div>
+        </div>
+        <div class="preset-card" data-preset="product">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#00ff88,#00f0ff)"></div>
+          <div class="preset-name">Product</div>
+          <div class="preset-desc">Shopify ready</div>
+        </div>
+        <div class="preset-card" data-preset="subtle">
+          <div class="preset-dot" style="background:linear-gradient(135deg,#4400ff,#9b00ff)"></div>
+          <div class="preset-name">Subtle UV</div>
+          <div class="preset-desc">Natural look</div>
+        </div>
+      </div>
+      <button class="save-preset-btn" id="savePresetBtn">+ Save Current Settings as Preset</button>
+    </div>
+  </div>
+
+  <!-- ===== TAB: BATCH ===== -->
+  <div id="tabBatch" style="display:none">
+    <div class="panel">
+      <div class="panel-title">📦 Batch Process</div>
+      <div class="batch-zone" id="batchZone">
+        <span style="font-size:28px;display:block;margin-bottom:8px">🖼</span>
+        <span style="font-size:14px;font-weight:600;color:var(--uv-purple)">Select multiple photos</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.3);display:block;margin-top:4px">All processed with current settings</span>
+        <input type="file" id="batchInput" accept="image/*" multiple>
+      </div>
+      <div class="batch-list" id="batchList"></div>
+      <button class="batch-dl-btn" id="batchDlBtn">⬇ Download All as ZIP</button>
+    </div>
   </div>
 
 </div>
 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
-  const fileInput = document.getElementById('fileInput');
-  const uploadZone = document.getElementById('uploadZone');
-  const canvasContainer = document.getElementById('canvasContainer');
-  const mainCanvas = document.getElementById('mainCanvas');
-  const controls = document.getElementById('controls');
-  const actions = document.getElementById('actions');
-  const processing = document.getElementById('processing');
-  const ctx = mainCanvas.getContext('2d');
+// ── DOM refs ──────────────────────────────────────────────
+const fileInput     = document.getElementById('fileInput');
+const uploadZone    = document.getElementById('uploadZone');
+const canvasWrap    = document.getElementById('canvasWrap');
+const afterCanvas   = document.getElementById('afterCanvas');
+const beforeCanvas  = document.getElementById('beforeCanvas');
+const compareContainer = document.getElementById('compareContainer');
+const compareHandle = document.getElementById('compareHandle');
+const compareBtn    = document.getElementById('compareBtn');
+const controls      = document.getElementById('controls');
+const wmPanel       = document.getElementById('wmPanel');
+const actions       = document.getElementById('actions');
+const tabs          = document.getElementById('tabs');
+const batchZone     = document.getElementById('batchZone');
+const batchInput    = document.getElementById('batchInput');
+const batchList     = document.getElementById('batchList');
+const batchDlBtn    = document.getElementById('batchDlBtn');
+const presetGrid    = document.getElementById('presetGrid');
 
-  let originalImage = null;
-  let currentMode = 'classic';
-  let debounceTimer = null;
+const afterCtx  = afterCanvas.getContext('2d');
+const beforeCtx = beforeCanvas.getContext('2d');
 
-  // Color mode configs
-  const modes = {
-    classic: { hueShift: 240, satBoost: 1.8, tintR: 0.1, tintG: 0.05, tintB: 0.9 },
-    deep:    { hueShift: 270, satBoost: 2.0, tintR: 0.15, tintG: 0.0, tintB: 0.85 },
-    neon:    { hueShift: 300, satBoost: 2.2, tintR: 0.7, tintG: 0.0, tintB: 0.9 },
-    cyber:   { hueShift: 190, satBoost: 1.9, tintR: 0.0, tintG: 0.4, tintB: 1.0 }
+let originalImage = null;
+let currentMode   = 'classic';
+let currentWm     = 'none';
+let compareMode   = false;
+let debounceTimer = null;
+let userPresets   = JSON.parse(localStorage.getItem('triloka_presets') || '[]');
+let batchFiles    = [];
+let batchResults  = [];
+
+// ── Color modes ───────────────────────────────────────────
+const modes = {
+  classic: { satBoost:1.8, tintR:0.1,  tintG:0.05, tintB:0.9  },
+  deep:    { satBoost:2.0, tintR:0.15, tintG:0.0,  tintB:0.85 },
+  neon:    { satBoost:2.2, tintR:0.7,  tintG:0.0,  tintB:0.9  },
+  cyber:   { satBoost:1.9, tintR:0.0,  tintG:0.4,  tintB:1.0  }
+};
+
+// Built-in preset values
+const builtinPresets = {
+  festival: { intensity:90, glow:85, darkness:80, colorShift:70, neon:80, mode:'neon' },
+  rave:     { intensity:95, glow:90, darkness:85, colorShift:75, neon:95, mode:'deep' },
+  product:  { intensity:70, glow:55, darkness:65, colorShift:45, neon:60, mode:'classic' },
+  subtle:   { intensity:45, glow:35, darkness:50, colorShift:30, neon:40, mode:'classic' }
+};
+
+// ── Upload ────────────────────────────────────────────────
+uploadZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor='var(--uv-purple)'; });
+uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor='var(--uv-cyan)'; });
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.style.borderColor = 'var(--uv-cyan)';
+  handleFile(e.dataTransfer.files[0]);
+});
+
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      originalImage = img;
+      const maxW = 2048, maxH = 2048;
+      const scale = Math.min(1, maxW / img.width, maxH / img.height);
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+
+      afterCanvas.width  = w; afterCanvas.height  = h;
+      beforeCanvas.width = w; beforeCanvas.height = h;
+
+      // Draw original to before canvas
+      beforeCtx.drawImage(img, 0, 0, w, h);
+
+      uploadZone.style.display = 'none';
+      canvasWrap.classList.add('visible');
+      controls.style.display   = 'block';
+      wmPanel.style.display     = 'block';
+      actions.classList.add('visible');
+      tabs.classList.add('visible');
+      compareBtn.style.display  = 'block';
+
+      applyEffect();
+    };
+    img.src = e.target.result;
   };
+  reader.readAsDataURL(file);
+}
 
-  // Upload handlers
-  uploadZone.addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
-
-  uploadZone.addEventListener('dragover', e => {
-    e.preventDefault();
-    uploadZone.classList.add('dragover');
+// ── Sliders ───────────────────────────────────────────────
+['intensity','glow','darkness','colorShift','neon'].forEach(id => {
+  const el  = document.getElementById(id);
+  const val = document.getElementById(id + 'Val');
+  el.addEventListener('input', () => {
+    val.textContent = el.value;
+    if (document.getElementById('livePreview').checked) triggerEffect();
   });
-  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-  uploadZone.addEventListener('drop', e => {
-    e.preventDefault();
-    uploadZone.classList.remove('dragover');
-    handleFile(e.dataTransfer.files[0]);
-  });
+});
 
-  function handleFile(file) {
-    if (!file || !file.type.startsWith('image/')) return;
+document.getElementById('livePreview').addEventListener('change', () => {
+  if (document.getElementById('livePreview').checked) applyEffect();
+});
+
+// ── Mode buttons ──────────────────────────────────────────
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+    if (document.getElementById('livePreview').checked) triggerEffect();
+  });
+});
+
+// ── Watermark ─────────────────────────────────────────────
+document.querySelectorAll('.wm-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.wm-opt').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    currentWm = opt.dataset.wm;
+    if (document.getElementById('livePreview').checked) triggerEffect();
+  });
+});
+
+// ── Effect engine ─────────────────────────────────────────
+function triggerEffect() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(applyEffect, 100);
+}
+
+function applyEffect() {
+  if (!originalImage) return;
+  const intensity   = parseInt(document.getElementById('intensity').value)   / 100;
+  const glowStr     = parseInt(document.getElementById('glow').value)        / 100;
+  const darkness    = parseInt(document.getElementById('darkness').value)    / 100;
+  const colorShift  = parseInt(document.getElementById('colorShift').value)  / 100;
+  const neonPop     = parseInt(document.getElementById('neon').value)        / 100;
+  const mode        = modes[currentMode];
+  const w = afterCanvas.width, h = afterCanvas.height;
+
+  afterCtx.clearRect(0, 0, w, h);
+  afterCtx.drawImage(originalImage, 0, 0, w, h);
+
+  const imageData = afterCtx.getImageData(0, 0, w, h);
+  const data = imageData.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+    let r = data[i] / 255, g = data[i+1] / 255, b = data[i+2] / 255;
+
+    const lum = 0.299*r + 0.587*g + 0.114*b;
+    const darkFactor = Math.pow(lum, 1 + darkness * 2);
+
+    r = r*(1-colorShift*intensity)   + darkFactor*mode.tintR*colorShift*intensity;
+    g = g*(1-colorShift*intensity*0.8) + darkFactor*mode.tintG*colorShift*intensity;
+    b = b*(1-colorShift*intensity*0.3) + darkFactor*mode.tintB*colorShift*intensity;
+
+    const brightness = Math.max(r,g,b);
+    if (brightness > 0.5) {
+      const glowBoost = (brightness-0.5)*2*glowStr*neonPop*intensity;
+      r += glowBoost*mode.tintR*0.5;
+      g += glowBoost*mode.tintG*0.3;
+      b += glowBoost*mode.tintB;
+    }
+
+    const darkMulti = 1-(darkness*0.6*intensity);
+    r = r*darkMulti*(1+intensity*0.3);
+    g = g*darkMulti*(1+intensity*0.1);
+    b = b*darkMulti*(1+intensity*0.5);
+
+    const avg = (r+g+b)/3;
+    r = avg+(r-avg)*(1+neonPop*mode.satBoost*intensity);
+    g = avg+(g-avg)*(1+neonPop*mode.satBoost*intensity);
+    b = avg+(b-avg)*(1+neonPop*mode.satBoost*intensity);
+
+    data[i]   = Math.min(255,Math.max(0,r*255));
+    data[i+1] = Math.min(255,Math.max(0,g*255));
+    data[i+2] = Math.min(255,Math.max(0,b*255));
+  }
+
+  afterCtx.putImageData(imageData, 0, 0);
+
+  // Watermark
+  drawWatermark(afterCtx, w, h, currentWm);
+
+  // Update compare
+  if (compareMode) updateCompareClip(comparePos);
+
+  // Glow CSS
+  compareContainer.classList.toggle('uv-active', intensity > 0.5);
+}
+
+// ── Watermark renderer ────────────────────────────────────
+function drawWatermark(ctx, w, h, pos) {
+  if (pos === 'none') return;
+  ctx.save();
+  const fontSize = Math.max(16, Math.round(w * 0.035));
+  ctx.font = `700 ${fontSize}px 'Orbitron', monospace`;
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.letterSpacing = '3px';
+  const text = '✦ TRILOKA';
+  const tm = ctx.measureText(text);
+  const pad = fontSize * 0.8;
+  if (pos === 'br') {
+    ctx.textAlign = 'right';
+    ctx.fillText(text, w - pad, h - pad);
+  } else if (pos === 'bl') {
+    ctx.textAlign = 'left';
+    ctx.fillText(text, pad, h - pad);
+  } else if (pos === 'center') {
+    ctx.globalAlpha = 0.18;
+    ctx.textAlign = 'center';
+    ctx.translate(w/2, h/2);
+    ctx.rotate(-Math.PI/6);
+    ctx.fillText(text, 0, 0);
+  }
+  ctx.restore();
+}
+
+// ── Before/After compare ──────────────────────────────────
+let comparePos = 0.5;
+let isDragging = false;
+
+compareBtn.addEventListener('click', () => {
+  compareMode = !compareMode;
+  compareBtn.classList.toggle('active', compareMode);
+  compareBtn.textContent = compareMode ? '✕ Exit Compare' : '👁 Before / After Compare';
+  compareContainer.classList.toggle('compare-mode', compareMode);
+  if (compareMode) {
+    comparePos = 0.5;
+    updateCompareClip(0.5);
+  } else {
+    beforeCanvas.style.clipPath = '';
+  }
+});
+
+function updateCompareClip(pos) {
+  const pct = (pos * 100).toFixed(1);
+  beforeCanvas.style.clipPath = `inset(0 ${100-pct}% 0 0)`;
+  compareHandle.style.left = pct + '%';
+}
+
+compareContainer.addEventListener('mousedown', startDrag);
+compareContainer.addEventListener('touchstart', startDrag, {passive:true});
+
+function startDrag(e) {
+  if (!compareMode) return;
+  isDragging = true;
+  moveDrag(e);
+}
+
+document.addEventListener('mousemove', e => { if(isDragging) moveDrag(e); });
+document.addEventListener('touchmove', e => { if(isDragging) moveDrag(e); }, {passive:true});
+document.addEventListener('mouseup',   () => { isDragging = false; });
+document.addEventListener('touchend',  () => { isDragging = false; });
+
+function moveDrag(e) {
+  const rect = compareContainer.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  comparePos = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  updateCompareClip(comparePos);
+}
+
+// ── Tabs ──────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const which = tab.dataset.tab;
+    document.getElementById('tabEdit').style.display    = which === 'edit'    ? 'block' : 'none';
+    document.getElementById('tabPresets').style.display = which === 'presets' ? 'block' : 'none';
+    document.getElementById('tabBatch').style.display   = which === 'batch'   ? 'block' : 'none';
+  });
+});
+
+// ── Presets ───────────────────────────────────────────────
+function applyPresetValues(vals) {
+  document.getElementById('intensity').value  = vals.intensity;
+  document.getElementById('glow').value       = vals.glow;
+  document.getElementById('darkness').value   = vals.darkness;
+  document.getElementById('colorShift').value = vals.colorShift;
+  document.getElementById('neon').value       = vals.neon;
+  ['intensity','glow','darkness','colorShift','neon'].forEach(id => {
+    document.getElementById(id+'Val').textContent = document.getElementById(id).value;
+  });
+  currentMode = vals.mode || 'classic';
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === currentMode);
+  });
+  applyEffect();
+  showToast('Preset applied!');
+}
+
+// Built-in presets
+document.querySelectorAll('.preset-card[data-preset]').forEach(card => {
+  card.addEventListener('click', () => {
+    const key = card.dataset.preset;
+    if (builtinPresets[key]) applyPresetValues(builtinPresets[key]);
+  });
+});
+
+// Save current as preset
+document.getElementById('savePresetBtn').addEventListener('click', () => {
+  const name = prompt('Name your preset:');
+  if (!name || !name.trim()) return;
+  const preset = {
+    name: name.trim(),
+    intensity:  parseInt(document.getElementById('intensity').value),
+    glow:       parseInt(document.getElementById('glow').value),
+    darkness:   parseInt(document.getElementById('darkness').value),
+    colorShift: parseInt(document.getElementById('colorShift').value),
+    neon:       parseInt(document.getElementById('neon').value),
+    mode:       currentMode
+  };
+  userPresets.push(preset);
+  localStorage.setItem('triloka_presets', JSON.stringify(userPresets));
+  renderUserPresets();
+  showToast('Preset saved!');
+});
+
+function renderUserPresets() {
+  // Remove old user preset cards
+  document.querySelectorAll('.preset-card.user-preset').forEach(el => el.remove());
+  userPresets.forEach((p, idx) => {
+    const card = document.createElement('div');
+    card.className = 'preset-card user-preset saved';
+    card.innerHTML = `
+      <div class="preset-dot" style="background:var(--uv-cyan)"></div>
+      <div class="preset-name">${p.name}</div>
+      <div class="preset-desc">Custom · tap to apply</div>
+    `;
+    card.addEventListener('click', () => applyPresetValues(p));
+    presetGrid.appendChild(card);
+  });
+}
+renderUserPresets();
+
+// ── Batch processing ──────────────────────────────────────
+batchZone.addEventListener('click', () => batchInput.click());
+batchInput.addEventListener('change', e => {
+  batchFiles = Array.from(e.target.files);
+  batchResults = new Array(batchFiles.length).fill(null);
+  renderBatchList();
+  processBatch();
+});
+
+function renderBatchList() {
+  batchList.innerHTML = '';
+  batchFiles.forEach((file, i) => {
+    const item = document.createElement('div');
+    item.className = 'batch-item';
+    item.id = 'batch-item-' + i;
+    const thumb = document.createElement('img');
+    thumb.className = 'batch-thumb';
+    thumb.src = URL.createObjectURL(file);
+    const name = document.createElement('div');
+    name.className = 'batch-name';
+    name.textContent = file.name;
+    const status = document.createElement('div');
+    status.className = 'batch-status pending';
+    status.id = 'batch-status-' + i;
+    status.textContent = 'Pending';
+    item.appendChild(thumb);
+    item.appendChild(name);
+    item.appendChild(status);
+    batchList.appendChild(item);
+  });
+}
+
+async function processBatch() {
+  const intensity   = parseInt(document.getElementById('intensity').value)   / 100;
+  const glowStr     = parseInt(document.getElementById('glow').value)        / 100;
+  const darkness    = parseInt(document.getElementById('darkness').value)    / 100;
+  const colorShift  = parseInt(document.getElementById('colorShift').value)  / 100;
+  const neonPop     = parseInt(document.getElementById('neon').value)        / 100;
+  const mode        = modes[currentMode];
+
+  for (let i = 0; i < batchFiles.length; i++) {
+    const statusEl = document.getElementById('batch-status-' + i);
+    statusEl.className = 'batch-status processing';
+    statusEl.textContent = '...';
+
+    const dataUrl = await processOneFile(batchFiles[i], intensity, glowStr, darkness, colorShift, neonPop, mode);
+    batchResults[i] = { name: batchFiles[i].name.replace(/\.[^.]+$/, '') + '-UV.jpg', data: dataUrl };
+
+    statusEl.className = 'batch-status done';
+    statusEl.textContent = '✓ Done';
+  }
+
+  batchDlBtn.classList.add('visible');
+  showToast('All ' + batchFiles.length + ' photos processed!');
+}
+
+function processOneFile(file, intensity, glowStr, darkness, colorShift, neonPop, mode) {
+  return new Promise(resolve => {
     const reader = new FileReader();
     reader.onload = e => {
       const img = new Image();
       img.onload = () => {
-        originalImage = img;
-        // Set canvas size — 2048px max for Shopify quality
-        const maxW = 2048;
-        const maxH = 2048;
-        const scale = Math.min(1, maxW / img.width, maxH / img.height);
-        mainCanvas.width = Math.round(img.width * scale);
-        mainCanvas.height = Math.round(img.height * scale);
-
-        uploadZone.style.display = 'none';
-        canvasContainer.classList.add('visible');
-        controls.classList.add('visible');
-        actions.classList.add('visible');
-
-        applyEffect();
+        const maxW = 2048, maxH = 2048;
+        const scale = Math.min(1, maxW/img.width, maxH/img.height);
+        const c = document.createElement('canvas');
+        c.width  = Math.round(img.width  * scale);
+        c.height = Math.round(img.height * scale);
+        const ctx2 = c.getContext('2d');
+        ctx2.drawImage(img, 0, 0, c.width, c.height);
+        const imgData = ctx2.getImageData(0, 0, c.width, c.height);
+        const data = imgData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          let r = data[i]/255, g = data[i+1]/255, b = data[i+2]/255;
+          const lum = 0.299*r+0.587*g+0.114*b;
+          const df = Math.pow(lum, 1+darkness*2);
+          r = r*(1-colorShift*intensity)+df*mode.tintR*colorShift*intensity;
+          g = g*(1-colorShift*intensity*0.8)+df*mode.tintG*colorShift*intensity;
+          b = b*(1-colorShift*intensity*0.3)+df*mode.tintB*colorShift*intensity;
+          const br = Math.max(r,g,b);
+          if (br>0.5) { const gb=(br-0.5)*2*glowStr*neonPop*intensity; r+=gb*mode.tintR*0.5; g+=gb*mode.tintG*0.3; b+=gb*mode.tintB; }
+          const dm = 1-(darkness*0.6*intensity);
+          r=r*dm*(1+intensity*0.3); g=g*dm*(1+intensity*0.1); b=b*dm*(1+intensity*0.5);
+          const avg=(r+g+b)/3;
+          r=avg+(r-avg)*(1+neonPop*mode.satBoost*intensity);
+          g=avg+(g-avg)*(1+neonPop*mode.satBoost*intensity);
+          b=avg+(b-avg)*(1+neonPop*mode.satBoost*intensity);
+          data[i]=Math.min(255,Math.max(0,r*255));
+          data[i+1]=Math.min(255,Math.max(0,g*255));
+          data[i+2]=Math.min(255,Math.max(0,b*255));
+        }
+        ctx2.putImageData(imgData, 0, 0);
+        drawWatermark(ctx2, c.width, c.height, currentWm);
+        resolve(c.toDataURL('image/jpeg', 0.85));
       };
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
-  }
-
-  // Sliders
-  const sliders = ['intensity', 'glow', 'darkness', 'colorShift', 'neon'];
-  sliders.forEach(id => {
-    const el = document.getElementById(id);
-    const val = document.getElementById(id + 'Val');
-    el.addEventListener('input', () => {
-      val.textContent = el.value;
-      if (document.getElementById('livePreview').checked) {
-        triggerEffect();
-      }
-    });
   });
+}
 
-  document.getElementById('livePreview').addEventListener('change', () => {
-    if (document.getElementById('livePreview').checked) applyEffect();
+// Batch download — individual files (ZIP needs external lib; download one by one)
+batchDlBtn.addEventListener('click', () => {
+  batchResults.forEach((result, i) => {
+    if (!result) return;
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.download = result.name;
+      link.href = result.data;
+      link.click();
+    }, i * 600);
   });
+  showToast('Downloading ' + batchResults.length + ' files...');
+});
 
-  // Mode buttons
-  document.querySelectorAll('.mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentMode = btn.dataset.mode;
-      if (document.getElementById('livePreview').checked) triggerEffect();
-    });
+// ── Reset ─────────────────────────────────────────────────
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!originalImage) return;
+  document.getElementById('intensity').value  = 75;
+  document.getElementById('glow').value       = 60;
+  document.getElementById('darkness').value   = 70;
+  document.getElementById('colorShift').value = 50;
+  document.getElementById('neon').value       = 65;
+  ['intensity','glow','darkness','colorShift','neon'].forEach(id => {
+    document.getElementById(id+'Val').textContent = document.getElementById(id).value;
   });
+  currentMode = 'classic';
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode==='classic'));
+  applyEffect();
+  showToast('Settings reset');
+});
 
-  function triggerEffect() {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(applyEffect, 120);
-  }
+// ── Download ──────────────────────────────────────────────
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const link = document.createElement('a');
+  link.download = 'triloka-uv-shopify.jpg';
+  link.href = afterCanvas.toDataURL('image/jpeg', 0.85);
+  link.click();
+  showToast('Saved! 2048px · Shopify ready');
+});
 
-  function applyEffect() {
-    if (!originalImage) return;
-
-    const intensity = parseInt(document.getElementById('intensity').value) / 100;
-    const glowStr = parseInt(document.getElementById('glow').value) / 100;
-    const darkness = parseInt(document.getElementById('darkness').value) / 100;
-    const colorShift = parseInt(document.getElementById('colorShift').value) / 100;
-    const neonPop = parseInt(document.getElementById('neon').value) / 100;
-    const mode = modes[currentMode];
-
-    // Draw original
-    ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-    ctx.drawImage(originalImage, 0, 0, mainCanvas.width, mainCanvas.height);
-
-    // Get pixel data
-    const imageData = ctx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
-    const data = imageData.data;
-
-    for (let i = 0; i < data.length; i += 4) {
-      let r = data[i] / 255;
-      let g = data[i + 1] / 255;
-      let b = data[i + 2] / 255;
-
-      // Step 1: Darken background (crush blacks)
-      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-      const darkFactor = Math.pow(lum, 1 + darkness * 2);
-
-      // Step 2: Apply UV color tint based on mode
-      r = r * (1 - colorShift * intensity) + darkFactor * mode.tintR * colorShift * intensity;
-      g = g * (1 - colorShift * intensity * 0.8) + darkFactor * mode.tintG * colorShift * intensity;
-      b = b * (1 - colorShift * intensity * 0.3) + darkFactor * mode.tintB * colorShift * intensity;
-
-      // Step 3: Boost bright areas (simulates UV reactive print glow)
-      const brightness = Math.max(r, g, b);
-      if (brightness > 0.5) {
-        const glowBoost = (brightness - 0.5) * 2 * glowStr * neonPop * intensity;
-        r += glowBoost * mode.tintR * 0.5;
-        g += glowBoost * mode.tintG * 0.3;
-        b += glowBoost * mode.tintB;
-      }
-
-      // Step 4: Darken overall for UV atmosphere
-      const darkMulti = 1 - (darkness * 0.6 * intensity);
-      r = r * darkMulti * (1 + intensity * 0.3);
-      g = g * darkMulti * (1 + intensity * 0.1);
-      b = b * darkMulti * (1 + intensity * 0.5);
-
-      // Step 5: Neon saturation pop
-      const avg = (r + g + b) / 3;
-      r = avg + (r - avg) * (1 + neonPop * mode.satBoost * intensity);
-      g = avg + (g - avg) * (1 + neonPop * mode.satBoost * intensity);
-      b = avg + (b - avg) * (1 + neonPop * mode.satBoost * intensity);
-
-      // Clamp
-      data[i]     = Math.min(255, Math.max(0, r * 255));
-      data[i + 1] = Math.min(255, Math.max(0, g * 255));
-      data[i + 2] = Math.min(255, Math.max(0, b * 255));
-    }
-
-    ctx.putImageData(imageData, 0, 0);
-
-    // CSS glow effect on canvas for high intensity
-    if (intensity > 0.5) {
-      canvasContainer.classList.add('uv-active');
-    } else {
-      canvasContainer.classList.remove('uv-active');
-    }
-  }
-
-  // Reset
-  document.getElementById('resetBtn').addEventListener('click', () => {
-    if (!originalImage) return;
-    ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-    ctx.drawImage(originalImage, 0, 0, mainCanvas.width, mainCanvas.height);
-    canvasContainer.classList.remove('uv-active');
-    // Reset sliders
-    document.getElementById('intensity').value = 75;
-    document.getElementById('glow').value = 60;
-    document.getElementById('darkness').value = 70;
-    document.getElementById('colorShift').value = 50;
-    document.getElementById('neon').value = 65;
-    ['intensity','glow','darkness','colorShift','neon'].forEach(id => {
-      document.getElementById(id + 'Val').textContent = document.getElementById(id).value;
-    });
-    currentMode = 'classic';
-    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector('[data-mode="classic"]').classList.add('active');
-    applyEffect();
-  });
-
-  // Download — 2048px max, JPEG 85% optimised for Shopify
-  document.getElementById('downloadBtn').addEventListener('click', () => {
-    const link = document.createElement('a');
-    link.download = 'triloka-uv-shopify.jpg';
-    link.href = mainCanvas.toDataURL('image/jpeg', 0.85);
-    link.click();
-  });
+// ── Toast ─────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
 </script>
 </body>
 </html>
